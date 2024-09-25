@@ -5,9 +5,9 @@ const createPost = async (post) => {
     try {
         const newPost = new Post(post);
         await newPost.save();
-        console.log('success');
+        return newPost
     } catch (error) {
-        console.log('faild');
+        createError('Mongoose', error)
     }
 };
 
@@ -20,4 +20,13 @@ const getAllPosts = async () => {
     };
 };
 
-module.exports = { createPost, getAllPosts }
+const getPost = async (postId) => {
+    try {
+        const post = await Post.findById(postId);
+        return post;
+    } catch (error) {
+        createError('Mongoose', error)
+    }
+}
+
+module.exports = { createPost, getAllPosts, getPost }
