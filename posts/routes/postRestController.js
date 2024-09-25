@@ -6,10 +6,10 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     try {
         const posts = await getAllPosts();
-        res.send(posts)
+        res.send(posts);
     } catch (error) {
         handleError(res, 400, error.message);
-    }
+    };
 });
 
 module.exports = router;

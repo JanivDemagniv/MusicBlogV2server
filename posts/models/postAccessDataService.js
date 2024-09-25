@@ -14,10 +14,10 @@ const createPost = async (post) => {
 const getAllPosts = async () => {
     try {
         const allPosts = await Post.find();
-        return allPosts
+        return allPosts;
     } catch (error) {
-        createError('Mongoose', error)
-    }
-}
+        createError('Mongoose', error);
+    };
+};
 
 module.exports = { createPost, getAllPosts }

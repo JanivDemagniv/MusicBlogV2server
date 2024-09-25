@@ -2,10 +2,15 @@ const express = require('express');
 const { handleError } = require('../../utils/handleError');
 const { createUser, loginUser, getUser, getAllUsers, updateUser, deleteUser } = require('../models/userAccessDataService');
 const auth = require('../../auth/authServices');
+const { validateSignup, validateLogin } = require('../validation/userValidationService');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
+        const errorMessage = validateSignup(req.body);
+
+        if (errorMessage) return handleError(res, 400, 'Validation Error:' + errorMessage);
+
         let newUser = await createUser(req.body);
         res.send(newUser);
     } catch (error) {
@@ -15,6 +20,10 @@ router.post('/', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
+        const errorMessage = validateLogin(req.body);
+
+        if (errorMessage) return handleError(res, 400, 'Validation Error: ' + errorMessage);
+
         let { email, password } = req.body;
         const token = await loginUser(email, password);
         res.send(token)
