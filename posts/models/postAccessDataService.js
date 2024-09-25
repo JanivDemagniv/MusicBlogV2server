@@ -25,8 +25,17 @@ const getPost = async (postId) => {
         const post = await Post.findById(postId);
         return post;
     } catch (error) {
-        createError('Mongoose', error)
-    }
-}
+        createError('Mongoose', error);
+    };
+};
 
-module.exports = { createPost, getAllPosts, getPost }
+const updatePost = async (postId, newPost) => {
+    try {
+        const post = await Post.findByIdAndDelete(postId, newPost);
+        return post;
+    } catch (error) {
+        createError('Mongoose', error);
+    };
+};
+
+module.exports = { createPost, getAllPosts, getPost, updatePost }
