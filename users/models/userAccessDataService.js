@@ -1,10 +1,13 @@
+const { genetateAuthToken } = require("../../auth/providers/jwt");
 const { createError } = require("../../utils/handleError");
+const { generateUserPassword, comparePasswords } = require("../helpers/bcryp");
 const User = require("./mongodb/User");
 const _ = require('lodash');
 
 const createUser = async (newUser) => {
     try {
         const user = new User(newUser);
+        user.password = generateUserPassword(user.password);
         await user.save();
         let resUser = _.pick(user, ['_id', 'email', 'userName'])
         return resUser;
@@ -25,19 +28,21 @@ const getUser = async (userId) => {
 const loginUser = async (email, password) => {
     try {
         const userFromDb = await User.findOne({ email });
+
         if (!userFromDb) {
             let error = new Error;
-            error.message = 'Invalid email or password';
+            error.message = 'Invalid UserName or password';
             createError('Authentication', error);
         };
-        if (userFromDb.password !== password) {
+        if (!comparePasswords(password, userFromDb.password)) {
             let error = new Error;
-            error.message = 'Invalid email or password';
+            error.message = 'Invalid UserName or password';
             createError('Authentication', error);
         };
-        return userFromDb;
+        const userToken = genetateAuthToken(userFromDb);
+        return userToken;
     } catch (error) {
-        createError('Mongoose', error)
+        createError('Mongoose', error);
     }
 };
 
@@ -48,6 +53,6 @@ const getAllUsers = async () => {
     } catch (error) {
         createError('Mongosose', error)
     }
-}
+};
 
 module.exports = { createUser, getUser, loginUser, getAllUsers }
