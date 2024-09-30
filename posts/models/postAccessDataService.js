@@ -11,6 +11,18 @@ const createPost = async (post) => {
     }
 };
 
+const createComment = async (comment) => {
+    try {
+        const postOfTheComment = await Post.findById(comment.post);
+
+        postOfTheComment.comments.push(comment);
+        await Post.findByIdAndUpdate(postOfTheComment._id, postOfTheComment)
+        return comment
+    } catch (error) {
+        createError('Mongoose', error)
+    }
+}
+
 const getAllPosts = async () => {
     try {
         const allPosts = await Post.find();
@@ -31,11 +43,20 @@ const getPost = async (postId) => {
 
 const updatePost = async (postId, newPost) => {
     try {
-        const post = await Post.findByIdAndDelete(postId, newPost);
+        const post = await Post.findByIdAndUpdate(postId, newPost);
         return post;
     } catch (error) {
         createError('Mongoose', error);
     };
 };
 
-module.exports = { createPost, getAllPosts, getPost, updatePost }
+const deletePost = async (postId) => {
+    try {
+        const deletePost = await Post.findByIdAndDelete(postId);
+        return deletePost;
+    } catch (error) {
+        createError('Mongoose', error)
+    }
+}
+
+module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost }
