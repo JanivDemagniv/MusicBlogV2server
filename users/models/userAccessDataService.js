@@ -120,20 +120,20 @@ const commentLikeOrUnlike = async (commentId, userId) => {
 
 const deleteCommentFromUser = async (commentId) => {
     try {
-        const user = await User.find({ likedComments: commentId });
+        const users = await User.find({ likedComments: commentId });
 
-        user.forEach(async (user) => {
+        if (users) {
+            users.forEach(async (userInfo) => {
+                let newLikedArray = deletePostLike(commentId, userInfo.likedComments);
+                userInfo.likedComments = newLikedArray;
+                await User.findByIdAndUpdate(userInfo._id, userInfo);
+            })
+            return true;
+        };
 
-            if (user) {
-                await commentLikeOrUnlike(commentId, user._id.toString());
-                return true;
-            };
-
-            if (!user) {
-                return false;
-            };
-
-        });
+        if (!users) {
+            return false;
+        };
     } catch (error) {
         createError('Mongoose', error);
     };
@@ -141,19 +141,20 @@ const deleteCommentFromUser = async (commentId) => {
 
 const deletePostFromUser = async (postId) => {
     try {
-        const user = await User.find({ likedPosts: postId });
+        const users = await User.find({ likedPosts: postId });
 
-        user.forEach(async (user) => {
+        if (users) {
+            users.forEach(async (userInfo) => {
+                let newLikedArray = deletePostLike(postId, userInfo.likedPosts);
+                userInfo.likedPosts = newLikedArray;
+                await User.findByIdAndUpdate(userInfo._id, userInfo);
+            })
+            return true;
+        };
 
-            if (user) {
-                await postLikeOrUnlike(postId, user._id.toString());
-                return true;
-            };
-
-            if (!user) {
-                return false;
-            };
-        });
+        if (!users) {
+            return false;
+        };
     } catch (error) {
         createError('Mongoose', error);
     };

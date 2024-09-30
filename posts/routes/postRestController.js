@@ -139,7 +139,11 @@ router.delete('/:id', auth, async (req, res) => {
             return handleError(res, 403, 'Athorization error: you are not authorise to delete the post');
         };
 
-        await deletePostFromUser(id)
+        if (postFromDb.comments.length > 0) {
+            postFromDb.comments.forEach(async (comment) => await deleteCommentFromUser(comment._id));
+        }
+
+        await deletePostFromUser(id);
         await deletePost(postFromDb._id);
         res.send(postFromDb);
     } catch (error) {

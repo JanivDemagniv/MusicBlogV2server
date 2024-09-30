@@ -76,6 +76,7 @@ const deletePost = async (postId) => {
 const deleteComment = async (postId, commentId) => {
     try {
         const postOfTheComment = await getPost(postId);
+
         let newCommentArray = deleteObjectById(postOfTheComment.comments, commentId);
         postOfTheComment.comments = newCommentArray;
 
@@ -108,7 +109,6 @@ const unlikePost = async (postId) => {
 const likeComment = async (commentId) => {
     try {
         const postFromDb = await Post.findOne({ "comments._id": commentId });
-        console.log(postFromDb);
 
         const postId = postFromDb._id
         let comment = postFromDb.comments.find((comment) => comment._id.toString() === commentId);
@@ -122,7 +122,6 @@ const likeComment = async (commentId) => {
 const unlikecomment = async (commentId) => {
     try {
         const postFromDb = await Post.findOne({ "comments._id": commentId });
-        console.log(postFromDb);
 
         const postId = postFromDb._id
         let comment = postFromDb.comments.find((comment) => comment._id.toString() === commentId);
