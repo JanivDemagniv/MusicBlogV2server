@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost } = require('../models/postAccessDataService');
+const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment } = require('../models/postAccessDataService');
 const { handleError } = require('../../utils/handleError');
 const auth = require('../../auth/authServices');
 const router = express.Router();
@@ -48,8 +48,23 @@ router.put('/comments', auth, async (req, res) => {
 
         let newComment = await createComment(comment);
         res.send(newComment);
+    } catch (error) {
+        handleError(res, 400, error.message);
+    };
+});
 
+router.put('/comments/:id', auth, async (req, res) => {
+    try {
+        const userInfo = req.user;
+        const { id } = req.params;
+        let updatedComment = req.body
 
+        if (userInfo._id !== req.creator && !userInfo.isAdmin) {
+            return handleError(res, 403, 'Authoristion Error: You are no allowed to edit this comment');
+        };
+
+        let updatedComments = await updateComment(updatedComment, id);
+        res.send(updatedComments)
     } catch (error) {
         handleError(res, 400, error.message)
     }
