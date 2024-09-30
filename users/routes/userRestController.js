@@ -72,7 +72,7 @@ router.put('/:id', auth, async (req, res) => {
         const userFromDb = await getUser(id);
 
         if (userInfo._id !== userFromDb._id.toString() && !userInfo.isAdmin) {
-            return handleError(res, 403, 'Athorization error: you are no allowed to edit the card');
+            return handleError(res, 403, 'Athorization error: you are no allowed to edit the user');
         };
 
         let user = await updateUser(id, newUserInfo);
@@ -93,7 +93,7 @@ router.delete('/:id', auth, async (req, res) => {
         };
 
         let userDeleted = await deleteUser(id);
-        return userDeleted;
+        res.send(userDeleted);
     } catch (error) {
         handleError(res, 400, error.message)
     };
