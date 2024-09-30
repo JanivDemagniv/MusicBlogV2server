@@ -82,8 +82,28 @@ const deleteComment = async (postId, commentId) => {
         await Post.findByIdAndUpdate(postId, postOfTheComment);
         return postOfTheComment.comments;
     } catch (error) {
-        createError('Mongoose', error)
-    }
-}
+        createError('Mongoose', error);
+    };
+};
 
-module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost, updateComment, deleteComment }
+const likePost = async (postId) => {
+    try {
+        const postFromDb = await getPost(postId);
+        postFromDb.likes += 1;
+        await Post.findByIdAndUpdate(postId, postFromDb);
+    } catch (error) {
+        createError('Mongoose', error);
+    };
+};
+
+const unlikePost = async (postId) => {
+    try {
+        const postFromDb = await getPost(postId);
+        postFromDb.likes -= 1;
+        await Post.findByIdAndUpdate(postId, postFromDb);
+    } catch (error) {
+        createError('Mongoose', error);
+    };
+};
+
+module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost, updateComment, deleteComment, likePost, unlikePost }

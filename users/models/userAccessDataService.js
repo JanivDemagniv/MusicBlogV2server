@@ -1,4 +1,5 @@
 const { genetateAuthToken } = require("../../auth/providers/jwt");
+const { unlikePost, likePost } = require("../../posts/models/postAccessDataService");
 const { createError } = require("../../utils/handleError");
 const { generateUserPassword, comparePasswords } = require("../helpers/bcryp");
 const { findIfPostLiked, deletePostLike, addPostLike } = require("../helpers/functions");
@@ -82,11 +83,13 @@ const postLikeOrUnlike = async (postId, userId) => {
         if (findIfPostLiked(postId, userInfo.likedPosts)) {
             let newLikedArray = deletePostLike(postId, userInfo.likedPosts);
             userInfo.likedPosts = newLikedArray;
+            await unlikePost(postId);
             await User.findByIdAndUpdate(userId, userInfo);
             return userInfo.likedPosts;
         };
 
         addPostLike(postId, userInfo.likedPosts);
+        await likePost(postId)
         await User.findByIdAndUpdate(userId, userInfo);
         return userInfo.likedPosts;
     } catch (error) {
