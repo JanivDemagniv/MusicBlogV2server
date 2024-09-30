@@ -105,7 +105,6 @@ router.patch('/comments/:id', auth, async (req, res) => {
     try {
         const userInfo = req.user;
         const { id } = req.params;
-
         let newLikedArray = await commentLikeOrUnlike(id, userInfo._id);
         res.send(newLikedArray);
     } catch (error) {
