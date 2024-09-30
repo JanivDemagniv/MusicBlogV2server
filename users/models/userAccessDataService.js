@@ -1,6 +1,7 @@
 const { genetateAuthToken } = require("../../auth/providers/jwt");
 const { createError } = require("../../utils/handleError");
 const { generateUserPassword, comparePasswords } = require("../helpers/bcryp");
+const { findIfPostLiked, deletePostLike, addPostLike } = require("../helpers/functions");
 const User = require("./mongodb/User");
 const _ = require('lodash');
 
@@ -19,11 +20,7 @@ const createUser = async (newUser) => {
 const getUser = async (userId) => {
     try {
         const user = await User.findById(userId);
-        console.log(user);
-
         const resUser = _.pick(user, ['_id', 'userName', 'email', 'name', 'profilePic', 'isAdmin', 'isCreator', 'likedPosts', 'likedComments']);
-        console.log(resUser);
-
         return resUser;
     } catch (error) {
         createError('Mongoose', error);
@@ -74,8 +71,29 @@ const deleteUser = async (userId) => {
         const userDeleted = await User.findByIdAndDelete(userId);
         return userDeleted;
     } catch (error) {
-        createError('Mongoose', error)
-    }
-}
+        createError('Mongoose', error);
+    };
+};
 
-module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser };
+const postLikeOrUnlike = async (postId, userId) => {
+    try {
+        const userInfo = await getUser(userId);
+
+
+
+        if (findIfPostLiked(postId, userInfo.likedPosts)) {
+            let newLikedArray = deletePostLike(postId, userInfo.likedPosts);
+            userInfo.likedPosts = newLikedArray;
+            await User.findByIdAndUpdate(userId, userInfo);
+            return userInfo.likedPosts;
+        };
+
+        addPostLike(postId, userInfo.likedPosts);
+        await User.findByIdAndUpdate(userId, userInfo);
+        return userInfo.likedPosts;
+    } catch (error) {
+        createError('Mongoose', error);
+    };
+};
+
+module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, postLikeOrUnlike };
