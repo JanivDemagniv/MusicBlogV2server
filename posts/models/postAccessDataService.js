@@ -1,5 +1,5 @@
 const { createError } = require("../../utils/handleError");
-const { replaceObjectById } = require("../helpers/functions");
+const { replaceObjectById, deleteObjectById } = require("../helpers/functions");
 const Post = require("./mongodb/Post");
 
 const createPost = async (post) => {
@@ -55,22 +55,35 @@ const updateComment = async (updateComment, commentId) => {
     try {
         const postOfTheComment = await Post.findById(updateComment.post);
         let newCommentArray = replaceObjectById(postOfTheComment.comments, commentId, updateComment);
-        postOfTheComment.comments = newCommentArray
+        postOfTheComment.comments = newCommentArray;
 
         await Post.findByIdAndUpdate(updateComment.post, postOfTheComment);
         return postOfTheComment.comments;
     } catch (error) {
-        createError("Mongoose", error)
-    }
-}
+        createError("Mongoose", error);
+    };
+};
 
 const deletePost = async (postId) => {
     try {
         const deletePost = await Post.findByIdAndDelete(postId);
         return deletePost;
     } catch (error) {
+        createError('Mongoose', error);
+    };
+};
+
+const deleteComment = async (postId, commentId) => {
+    try {
+        const postOfTheComment = await getPost(postId);
+        let newCommentArray = deleteObjectById(postOfTheComment.comments, commentId);
+        postOfTheComment.comments = newCommentArray;
+
+        await Post.findByIdAndUpdate(postId, postOfTheComment);
+        return postOfTheComment.comments;
+    } catch (error) {
         createError('Mongoose', error)
     }
 }
 
-module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost, updateComment }
+module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost, updateComment, deleteComment }

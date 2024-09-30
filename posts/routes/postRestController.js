@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment } = require('../models/postAccessDataService');
+const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment, deleteComment } = require('../models/postAccessDataService');
 const { handleError } = require('../../utils/handleError');
 const auth = require('../../auth/authServices');
 const router = express.Router();
@@ -87,6 +87,23 @@ router.put('/:id', auth, async (req, res) => {
         handleError(res, 400, error.message);
     };
 });
+
+router.delete('/comments/:id', auth, async (req, res) => {
+    try {
+        const userInfo = req.user;
+        const { id } = req.params;
+        const postId = req.body;
+
+        if (userInfo._id !== req.creator && !userInfo.isAdmin) {
+            return handleError(res, 403, 'Authoristion Error: You are no allowed to delete this comment');
+        };
+
+        let newCommentArray = await deleteComment(postId.post, id);
+        res.send(newCommentArray);
+    } catch (error) {
+        handleError(res, 400, error.message)
+    }
+})
 
 router.delete('/:id', auth, async (req, res) => {
     try {
