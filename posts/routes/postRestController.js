@@ -84,7 +84,7 @@ router.delete('/:id', auth, async (req, res) => {
         };
 
         await deletePost(postFromDb._id);
-        return postFromDb;
+        res.send(postFromDb)
     } catch (error) {
         handleError(res, 400, error.message)
     }
