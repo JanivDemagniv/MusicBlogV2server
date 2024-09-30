@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { DEFUALTVALIDATOR, DEFUALTCONTENTVALIDATOR } = require('../../../helpers/mongodb/mongoseValidators');
 const { Image } = require('../../../helpers/mongodb/Image');
+const commentSchema = require('./commets');
 
 const postSchema = new mongoose.Schema({
     title: DEFUALTVALIDATOR,
@@ -12,10 +13,12 @@ const postSchema = new mongoose.Schema({
         required: true
     },
     likes: { type: Number, default: 0 },
-    comments: [{ type: String }],
+    comments: [
+        commentSchema
+    ],
     createdAt: { type: Date, default: Date.now() }
 });
 
-const Post = mongoose.model('post', postSchema);
+const Post = mongoose.model('posts', postSchema);
 
 module.exports = Post;

@@ -29,10 +29,10 @@ router.post('/', auth, async (req, res) => {
 
         if (!userInfo.isCreator && !userInfo.isAdmin) return handleError(res, 403, 'Authoristion Error: You are no allowed to post');
 
-        const newPost = req.body;
+        let newPost = req.body;
         newPost.creator = userInfo._id;
         newPost = await createPost(newPost);
-        res.send(postUploaded);
+        res.send(newPost);
 
     } catch (error) {
         handleError(res, 400, error.message)
