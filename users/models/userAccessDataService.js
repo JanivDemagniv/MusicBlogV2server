@@ -79,8 +79,6 @@ const postLikeOrUnlike = async (postId, userId) => {
     try {
         const userInfo = await getUser(userId);
 
-
-
         if (findIfPostLiked(postId, userInfo.likedPosts)) {
             let newLikedArray = deletePostLike(postId, userInfo.likedPosts);
             userInfo.likedPosts = newLikedArray;
@@ -96,4 +94,23 @@ const postLikeOrUnlike = async (postId, userId) => {
     };
 };
 
-module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, postLikeOrUnlike };
+const commentLikeOrUnlike = async (commentId, userId) => {
+    try {
+        const userInfo = await getUser(userId);
+
+        if (findIfPostLiked(commentId, userInfo.likedComments)) {
+            let newLikedArray = deletePostLike(commentId, userInfo.likedComments);
+            userInfo.likedComments = newLikedArray;
+            await User.findByIdAndUpdate(userId, userInfo);
+            return userInfo.likedComments;
+        };
+
+        addPostLike(commentId, userInfo.likedComments);
+        await User.findByIdAndUpdate(userId, userInfo);
+        return userInfo.likedComments;
+    } catch (error) {
+        createError('Mongoose', error);
+    };
+}
+
+module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, postLikeOrUnlike, commentLikeOrUnlike };

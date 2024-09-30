@@ -2,7 +2,7 @@ const express = require('express');
 const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment, deleteComment } = require('../models/postAccessDataService');
 const { handleError } = require('../../utils/handleError');
 const auth = require('../../auth/authServices');
-const { postLikeOrUnlike } = require('../../users/models/userAccessDataService');
+const { postLikeOrUnlike, commentLikeOrUnlike } = require('../../users/models/userAccessDataService');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -100,6 +100,18 @@ router.patch('/:id', auth, async (req, res) => {
         handleError(res, 400, error.message);
     };
 });
+
+router.patch('/comments/:id', auth, async (req, res) => {
+    try {
+        const userInfo = req.user;
+        const { id } = req.params;
+
+        let newLikedArray = await commentLikeOrUnlike(id, userInfo._id);
+        res.send(newLikedArray);
+    } catch (error) {
+        handleError(res, 400, error.message);
+    };
+})
 
 router.delete('/comments/:id', auth, async (req, res) => {
     try {
