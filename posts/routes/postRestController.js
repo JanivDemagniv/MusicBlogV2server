@@ -2,7 +2,7 @@ const express = require('express');
 const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment, deleteComment } = require('../models/postAccessDataService');
 const { handleError } = require('../../utils/handleError');
 const auth = require('../../auth/authServices');
-const { postLikeOrUnlike, commentLikeOrUnlike } = require('../../users/models/userAccessDataService');
+const { postLikeOrUnlike, commentLikeOrUnlike, deleteCommentFromUser, deletePostFromUser } = require('../../users/models/userAccessDataService');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -122,7 +122,7 @@ router.delete('/comments/:id', auth, async (req, res) => {
         if (userInfo._id !== req.creator && !userInfo.isAdmin) {
             return handleError(res, 403, 'Authoristion Error: You are no allowed to delete this comment');
         };
-
+        await deleteCommentFromUser(id)
         let newCommentArray = await deleteComment(postId.post, id);
         res.send(newCommentArray);
     } catch (error) {
@@ -140,6 +140,7 @@ router.delete('/:id', auth, async (req, res) => {
             return handleError(res, 403, 'Athorization error: you are not authorise to delete the post');
         };
 
+        await deletePostFromUser(id)
         await deletePost(postFromDb._id);
         res.send(postFromDb);
     } catch (error) {

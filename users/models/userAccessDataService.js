@@ -111,6 +111,47 @@ const commentLikeOrUnlike = async (commentId, userId) => {
     } catch (error) {
         createError('Mongoose', error);
     };
-}
+};
 
-module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, postLikeOrUnlike, commentLikeOrUnlike };
+const deleteCommentFromUser = async (commentId) => {
+    try {
+        const user = await User.find({ likedComments: commentId });
+
+        user.forEach(async (user) => {
+
+            if (user) {
+                await commentLikeOrUnlike(commentId, user._id.toString());
+                return true;
+            };
+
+            if (!user) {
+                return false;
+            };
+
+        });
+    } catch (error) {
+        createError('Mongoose', error);
+    };
+};
+
+const deletePostFromUser = async (postId) => {
+    try {
+        const user = await User.find({ likedPosts: postId });
+
+        user.forEach(async (user) => {
+
+            if (user) {
+                await postLikeOrUnlike(postId, user._id.toString());
+                return true;
+            };
+
+            if (!user) {
+                return false;
+            };
+        });
+    } catch (error) {
+        createError('Mongoose', error);
+    };
+};
+
+module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, postLikeOrUnlike, commentLikeOrUnlike, deleteCommentFromUser, deletePostFromUser };
