@@ -7,7 +7,9 @@ function findIfPostLiked(postId, likedArray) {
 };
 
 function deletePostLike(postId, likedArray) {
-    return likedArray.filter((post) => post !== postId);
+    return likedArray.filter((post) => {
+        return post !== postId;
+    });
 };
 
 module.exports = { addPostLike, findIfPostLiked, deletePostLike }

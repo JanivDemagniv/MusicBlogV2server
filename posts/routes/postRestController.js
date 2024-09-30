@@ -140,7 +140,7 @@ router.delete('/:id', auth, async (req, res) => {
         };
 
         if (postFromDb.comments.length > 0) {
-            postFromDb.comments.forEach(async (comment) => await deleteCommentFromUser(comment._id));
+            postFromDb.comments.forEach(async (comment) => await deleteCommentFromUser(comment._id.toString()));
         }
 
         await deletePostFromUser(id);
