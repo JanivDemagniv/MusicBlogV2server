@@ -135,7 +135,7 @@ router.delete('/:id', auth, async (req, res) => {
         const { id } = req.params;
         const postFromDb = await getPost(id);
 
-        if (userInfo._id !== postFromDb._id.toString() && !userInfo.isAdmin) {
+        if (userInfo._id !== postFromDb.creator && !userInfo.isAdmin) {
             return handleError(res, 403, 'Athorization error: you are not authorise to delete the post');
         };
 
