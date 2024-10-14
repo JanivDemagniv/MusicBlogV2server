@@ -11,7 +11,7 @@ const createUser = async (newUser) => {
         const user = new User(newUser);
         user.password = generateUserPassword(user.password);
         await user.save();
-        let resUser = _.pick(user, ['_id', 'email', 'userName', 'isAdmin', 'isCreator']);
+        let resUser = _.pick(user, ['_id', 'email', 'userName', 'isAdmin', 'isCreator', 'profilePic']);
         return resUser;
     } catch (error) {
         createError('Mongoose', error);

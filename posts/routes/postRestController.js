@@ -31,7 +31,11 @@ router.post('/', auth, async (req, res) => {
         if (!userInfo.isCreator && !userInfo.isAdmin) return handleError(res, 403, 'Authoristion Error: You are no allowed to post');
 
         let newPost = req.body;
-        newPost.creator = userInfo._id;
+        newPost.creator = {};
+        newPost.creator._id = userInfo._id;
+        newPost.creator.name = userInfo.userName;
+        newPost.creator.image = userInfo.profilePic;
+
         newPost = await createPost(newPost);
         res.send(newPost);
 
@@ -45,7 +49,10 @@ router.put('/comments', auth, async (req, res) => {
         const userInfo = req.user;
         const comment = req.body;
 
-        comment.creator = userInfo._id;
+        comment.creator = {};
+        comment.creator._id = userInfo._id;
+        comment.creator.name = userInfo.userName;
+        comment.creator.image = userInfo.profilePic;
 
         let newComment = await createComment(comment);
         res.send(newComment);
