@@ -11,8 +11,12 @@ const postSchema = new mongoose.Schema({
     content: DEFUALTCONTENTVALIDATOR,
     image: Image,
     creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        name: DEFUALTVALIDATOR,
+        image: Image
     },
     likes: { type: Number, default: 0 },
     comments: [

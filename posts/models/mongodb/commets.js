@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 const { DEFUALTCONTENTVALIDATOR, DEFUALTVALIDATOR } = require('../../../helpers/mongodb/mongoseValidators');
+const { Image } = require('../../../helpers/mongodb/Image');
 
 const commentSchema = new mongoose.Schema({
     content: DEFUALTCONTENTVALIDATOR,
     creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        name: DEFUALTVALIDATOR,
+        image: Image
     },
-    creatorName: DEFUALTVALIDATOR,
     post: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
