@@ -6,6 +6,8 @@ const commentSchema = require('./commets');
 const postSchema = new mongoose.Schema({
     title: DEFUALTVALIDATOR,
     subtitle: DEFUALTVALIDATOR,
+    artist: DEFUALTVALIDATOR,
+    album: DEFUALTVALIDATOR,
     content: DEFUALTCONTENTVALIDATOR,
     image: Image,
     creator: {
