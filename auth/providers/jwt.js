@@ -4,7 +4,7 @@ require('dotenv').config();
 const SECRET_WORD = process.env.JWT_SECRET;
 
 const genetateAuthToken = (user) => {
-    const token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin, isCreator: user.isCreator, initAt: new Date(), userName: user.userName, profilePic: user.profilePic }, SECRET_WORD);
+    const token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin, isCreator: user.isCreator, initAt: new Date(), userName: user.userName, profilePic: user.profilePic, likedComments: user.likedComments, likedPosts: user.likedPosts }, SECRET_WORD);
     return token;
 };
 
