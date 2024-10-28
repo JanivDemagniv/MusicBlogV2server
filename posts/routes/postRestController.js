@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment, deleteComment } = require('../models/postAccessDataService');
+const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment, deleteComment, updatePostLike, updateCommentLike } = require('../models/postAccessDataService');
 const { handleError } = require('../../utils/handleError');
 const auth = require('../../auth/authServices');
 const { postLikeOrUnlike, commentLikeOrUnlike, deleteCommentFromUser, deletePostFromUser } = require('../../users/models/userAccessDataService');
@@ -101,8 +101,8 @@ router.patch('/:id', auth, async (req, res) => {
         const userInfo = req.user;
         const { id } = req.params;
 
-        let newLikedArray = await postLikeOrUnlike(id, userInfo._id);
-        res.send(newLikedArray);
+        let newLiked = await updatePostLike(id, userInfo._id);
+        res.send(newLiked);
     } catch (error) {
         handleError(res, 400, error.message);
     };
@@ -112,8 +112,8 @@ router.patch('/comments/:id', auth, async (req, res) => {
     try {
         const userInfo = req.user;
         const { id } = req.params;
-        let newLikedArray = await commentLikeOrUnlike(id, userInfo._id);
-        res.send(newLikedArray);
+        let newLiked = await updateCommentLike(id, userInfo._id);
+        res.send(newLiked);
     } catch (error) {
         handleError(res, 400, error.message);
     };

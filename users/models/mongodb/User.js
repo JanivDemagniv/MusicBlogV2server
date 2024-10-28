@@ -17,8 +17,6 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    likedPosts: [{ type: String }],
-    likedComments: [{ type: String }],
     isAdmin: { type: Boolean, default: false },
     isCreator: { type: Boolean, default: false }
 });

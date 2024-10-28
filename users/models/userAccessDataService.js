@@ -21,7 +21,7 @@ const createUser = async (newUser) => {
 const getUser = async (userId) => {
     try {
         const user = await User.findById(userId);
-        const resUser = _.pick(user, ['_id', 'userName', 'email', 'name', 'profilePic', 'isAdmin', 'isCreator', 'likedPosts', 'likedComments']);
+        const resUser = _.pick(user, ['_id', 'userName', 'email', 'name', 'profilePic', 'isAdmin', 'isCreator']);
         return resUser;
     } catch (error) {
         createError('Mongoose', error);
@@ -76,48 +76,6 @@ const deleteUser = async (userId) => {
     };
 };
 
-const postLikeOrUnlike = async (postId, userId) => {
-    try {
-        const userInfo = await getUser(userId);
-
-        if (findIfPostLiked(postId, userInfo.likedPosts)) {
-            let newLikedArray = deletePostLike(postId, userInfo.likedPosts);
-            userInfo.likedPosts = newLikedArray;
-            await unlikePost(postId);
-            await User.findByIdAndUpdate(userId, userInfo);
-            return userInfo.likedPosts;
-        };
-
-        addPostLike(postId, userInfo.likedPosts);
-        await likePost(postId)
-        await User.findByIdAndUpdate(userId, userInfo);
-        return userInfo.likedPosts;
-    } catch (error) {
-        createError('Mongoose', error);
-    };
-};
-
-const commentLikeOrUnlike = async (commentId, userId) => {
-    try {
-        const userInfo = await getUser(userId);
-
-        if (findIfPostLiked(commentId, userInfo.likedComments)) {
-            let newLikedArray = deletePostLike(commentId, userInfo.likedComments);
-            userInfo.likedComments = newLikedArray;
-            await unlikecomment(commentId);
-            await User.findByIdAndUpdate(userId, userInfo);
-            return userInfo.likedComments;
-        };
-
-        addPostLike(commentId, userInfo.likedComments);
-        await likeComment(commentId)
-        await User.findByIdAndUpdate(userId, userInfo);
-        return userInfo.likedComments;
-    } catch (error) {
-        createError('Mongoose', error);
-    };
-};
-
 const deleteCommentFromUser = async (commentId) => {
     try {
         const users = await User.find({ likedComments: commentId });
@@ -160,4 +118,4 @@ const deletePostFromUser = async (postId) => {
     };
 };
 
-module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, postLikeOrUnlike, commentLikeOrUnlike, deleteCommentFromUser, deletePostFromUser };
+module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, deleteCommentFromUser, deletePostFromUser };

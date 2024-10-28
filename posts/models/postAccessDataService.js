@@ -87,49 +87,51 @@ const deleteComment = async (postId, commentId) => {
     };
 };
 
-const likePost = async (postId) => {
-    try {
-        const postFromDb = await getPost(postId);
-        postFromDb.likes += 1;
-        await Post.findByIdAndUpdate(postId, postFromDb);
-    } catch (error) {
-        createError('Mongoose', error);
-    };
-};
 
-const unlikePost = async (postId) => {
+const updatePostLike = async (postId, userId) => {
     try {
-        const postFromDb = await getPost(postId);
-        postFromDb.likes -= 1;
-        await Post.findByIdAndUpdate(postId, postFromDb);
+        let post = await Post.findById(postId);
+        if (post) {
+            if (post.likes.includes(userId)) {
+                let newLikes = post.likes.filter((like) => like != userId);
+                post.likes = newLikes;
+            } else {
+                post.likes.push(userId)
+            }
+            await Post.findByIdAndUpdate(postId, post);
+            return post
+        }
+        let error = new Error;
+        error.message = 'Card not found';
+        createError('Path', error);
     } catch (error) {
-        createError('Mongoose', error);
-    };
-};
-const likeComment = async (commentId) => {
-    try {
-        const postFromDb = await Post.findOne({ "comments._id": commentId });
+        createError('Mongoose', error)
+    }
+}
 
-        const postId = postFromDb._id
-        let comment = postFromDb.comments.find((comment) => comment._id.toString() === commentId);
-        comment.likes += 1
-        await Post.findByIdAndUpdate(postId, postFromDb);
-    } catch (error) {
-        createError('Mongoose', error);
-    };
-};
 
-const unlikecomment = async (commentId) => {
+const updateCommentLike = async (commentId, userId) => {
     try {
         const postFromDb = await Post.findOne({ "comments._id": commentId });
-
         const postId = postFromDb._id
         let comment = postFromDb.comments.find((comment) => comment._id.toString() === commentId);
-        comment.likes -= 1
-        await Post.findByIdAndUpdate(postId, postFromDb);
+        if (comment) {
+            if (comment.likes.includes(userId)) {
+                let newLikes = comment.likes.filter((like) => like != userId);
+                comment.likes = newLikes;
+            } else {
+                comment.likes.push(userId)
+            };
+            postFromDb.comments = comment;
+            await Post.findByIdAndUpdate(postId, comment)
+            return comment
+        }
+        let error = new Error;
+        error.message = 'Card not found';
+        createError('Path', error);
     } catch (error) {
-        createError('Mongoose', error);
-    };
-};
+        createError('Mongoose', error)
+    }
+}
 
-module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost, updateComment, deleteComment, likePost, unlikePost, likeComment, unlikecomment }
+module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost, updateComment, deleteComment, updatePostLike, updateCommentLike }

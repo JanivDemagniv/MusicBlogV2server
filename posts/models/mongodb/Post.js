@@ -18,7 +18,7 @@ const postSchema = new mongoose.Schema({
         name: DEFUALTVALIDATOR,
         image: Image
     },
-    likes: { type: Number, default: 0 },
+    likes: [{ type: String }],
     comments: [
         commentSchema
     ],
