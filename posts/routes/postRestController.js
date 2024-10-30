@@ -71,6 +71,10 @@ router.put('/comments/:id', auth, async (req, res) => {
             return handleError(res, 403, 'Authoristion Error: You are no allowed to edit this comment');
         };
 
+        if (userInfo.isAdmin) {
+            updatedComment.content += "  --edited by manger--"
+        }
+
         let updatedComments = await updateComment(updatedComment, id);
         res.send(updatedComments)
     } catch (error) {
