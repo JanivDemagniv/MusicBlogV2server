@@ -67,7 +67,7 @@ router.put('/comments/:id', auth, async (req, res) => {
         const { id } = req.params;
         let updatedComment = req.body
 
-        if (userInfo._id !== req.creator && !userInfo.isAdmin) {
+        if (userInfo._id !== updatedComment.creator._id && !userInfo.isAdmin) {
             return handleError(res, 403, 'Authoristion Error: You are no allowed to edit this comment');
         };
 
@@ -85,7 +85,7 @@ router.put('/:id', auth, async (req, res) => {
         let newPost = req.body;
         const postFromDb = await getPost(id);
 
-        if (userInfo._id !== postFromDb.creator.toString() && !userInfo.isAdmin) {
+        if (!userInfo.isCreator && !userInfo.isAdmin) {
             return handleError(res, 403, 'Athorization error: you are not authorise to edit the post');
         };
 
