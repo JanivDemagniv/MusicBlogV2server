@@ -109,29 +109,31 @@ const updatePostLike = async (postId, userId) => {
     }
 }
 
-
-const updateCommentLike = async (commentId, userId) => {
+const updateCommentLike = async (commentId, userId, postId) => {
     try {
-        const postFromDb = await Post.findOne({ "comments._id": commentId });
-        const postId = postFromDb._id
+        const postFromDb = await Post.findById(postId);
+
+        if (!postFromDb) {
+            throw new Error('Post not found');
+        }
+
         let comment = postFromDb.comments.find((comment) => comment._id.toString() === commentId);
+
         if (comment) {
             if (comment.likes.includes(userId)) {
-                let newLikes = comment.likes.filter((like) => like != userId);
-                comment.likes = newLikes;
+                comment.likes = comment.likes.filter((like) => like !== userId);
             } else {
-                comment.likes.push(userId)
-            };
-            postFromDb.comments = comment;
-            await Post.findByIdAndUpdate(postId, comment)
-            return comment
+                comment.likes.push(userId);
+            }
+            await postFromDb.save();
+            return comment;
+        } else {
+            throw new Error('Comment not found');
         }
-        let error = new Error;
-        error.message = 'Card not found';
-        createError('Path', error);
     } catch (error) {
-        createError('Mongoose', error)
+        console.error('Error updating comment like:', error);
+        throw error;
     }
-}
+};
 
 module.exports = { createPost, getAllPosts, getPost, updatePost, createComment, deletePost, updateComment, deleteComment, updatePostLike, updateCommentLike }

@@ -116,7 +116,8 @@ router.patch('/comments/:id', auth, async (req, res) => {
     try {
         const userInfo = req.user;
         const { id } = req.params;
-        let newLiked = await updateCommentLike(id, userInfo._id);
+        const postId = req.body;
+        let newLiked = await updateCommentLike(id, userInfo._id, postId);
         res.send(newLiked);
     } catch (error) {
         handleError(res, 400, error.message);
