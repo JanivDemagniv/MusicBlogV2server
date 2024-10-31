@@ -1,8 +1,6 @@
 const { genetateAuthToken } = require("../../auth/providers/jwt");
-const { unlikePost, likePost, likeComment, unlikecomment } = require("../../posts/models/postAccessDataService");
 const { createError } = require("../../utils/handleError");
 const { generateUserPassword, comparePasswords } = require("../helpers/bcryp");
-const { findIfPostLiked, deletePostLike, addPostLike } = require("../helpers/functions");
 const User = require("./mongodb/User");
 const _ = require('lodash');
 
@@ -76,46 +74,4 @@ const deleteUser = async (userId) => {
     };
 };
 
-const deleteCommentFromUser = async (commentId) => {
-    try {
-        const users = await User.find({ likedComments: commentId });
-
-        if (users) {
-            users.forEach(async (userInfo) => {
-                let newLikedArray = deletePostLike(commentId, userInfo.likedComments);
-                userInfo.likedComments = newLikedArray;
-                await User.findByIdAndUpdate(userInfo._id, userInfo);
-            })
-            return true;
-        };
-
-        if (!users) {
-            return false;
-        };
-    } catch (error) {
-        createError('Mongoose', error);
-    };
-};
-
-const deletePostFromUser = async (postId) => {
-    try {
-        const users = await User.find({ likedPosts: postId });
-
-        if (users) {
-            users.forEach(async (userInfo) => {
-                let newLikedArray = deletePostLike(postId, userInfo.likedPosts);
-                userInfo.likedPosts = newLikedArray;
-                await User.findByIdAndUpdate(userInfo._id, userInfo);
-            })
-            return true;
-        };
-
-        if (!users) {
-            return false;
-        };
-    } catch (error) {
-        createError('Mongoose', error);
-    };
-};
-
-module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, deleteCommentFromUser, deletePostFromUser };
+module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser };

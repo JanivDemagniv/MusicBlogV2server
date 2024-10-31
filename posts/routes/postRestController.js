@@ -2,7 +2,6 @@ const express = require('express');
 const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment, deleteComment, updatePostLike, updateCommentLike } = require('../models/postAccessDataService');
 const { handleError } = require('../../utils/handleError');
 const auth = require('../../auth/authServices');
-const { postLikeOrUnlike, commentLikeOrUnlike, deleteCommentFromUser, deletePostFromUser } = require('../../users/models/userAccessDataService');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -72,7 +71,7 @@ router.put('/comments/:id', auth, async (req, res) => {
         };
 
         if (userInfo.isAdmin) {
-            updatedComment.content += "  --edited by manger--"
+            updatedComment.content += "  --edited by manager--"
         }
 
         let updatedComments = await updateComment(updatedComment, id);
@@ -87,7 +86,6 @@ router.put('/:id', auth, async (req, res) => {
         const { id } = req.params;
         const userInfo = req.user;
         let newPost = req.body;
-        const postFromDb = await getPost(id);
 
         if (!userInfo.isCreator && !userInfo.isAdmin) {
             return handleError(res, 403, 'Athorization error: you are not authorise to edit the post');
@@ -128,12 +126,10 @@ router.delete('/comments/:id', auth, async (req, res) => {
     try {
         const userInfo = req.user;
         const { id } = req.params;
-        const postId = req.body;
 
-        if (userInfo._id !== req.creator && !userInfo.isAdmin) {
+        if (userInfo._id !== req.creator._id.toString() && !userInfo.isAdmin) {
             return handleError(res, 403, 'Authoristion Error: You are no allowed to delete this comment');
         };
-        await deleteCommentFromUser(id)
         let newCommentArray = await deleteComment(postId.post, id);
         res.send(newCommentArray);
     } catch (error) {
@@ -147,15 +143,10 @@ router.delete('/:id', auth, async (req, res) => {
         const { id } = req.params;
         const postFromDb = await getPost(id);
 
-        if (userInfo._id !== postFromDb.creator && !userInfo.isAdmin) {
+        if (userInfo._id !== postFromDb.creator._id && !userInfo.isAdmin) {
             return handleError(res, 403, 'Athorization error: you are not authorise to delete the post');
         };
 
-        if (postFromDb.comments.length > 0) {
-            postFromDb.comments.forEach(async (comment) => await deleteCommentFromUser(comment._id.toString()));
-        }
-
-        await deletePostFromUser(id);
         await deletePost(postFromDb._id);
         res.send(postFromDb);
     } catch (error) {
