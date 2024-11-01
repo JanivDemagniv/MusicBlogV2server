@@ -75,13 +75,11 @@ const deletePost = async (postId) => {
 
 const deleteComment = async (postId, commentId) => {
     try {
-        const postOfTheComment = await getPost(postId);
-
-        let newCommentArray = deleteObjectById(postOfTheComment.comments, commentId);
-        postOfTheComment.comments = newCommentArray;
-
-        await Post.findByIdAndUpdate(postId, postOfTheComment);
-        return postOfTheComment.comments;
+        let deletedComment = await Post.updateOne(
+            { _id: postId },
+            { $pull: { comments: { _id: commentId } } }
+        )
+        return deletedComment;
     } catch (error) {
         createError('Mongoose', error);
     };
@@ -112,10 +110,6 @@ const updatePostLike = async (postId, userId) => {
 const updateCommentLike = async (commentId, userId, postId) => {
     try {
         const postFromDb = await Post.findById(postId);
-
-        if (!postFromDb) {
-            throw new Error('Post not found');
-        }
 
         let comment = postFromDb.comments.find((comment) => comment._id.toString() === commentId);
 

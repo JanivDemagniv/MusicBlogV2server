@@ -2,6 +2,7 @@ const express = require('express');
 const { getAllPosts, getPost, createPost, updatePost, createComment, deletePost, updateComment, deleteComment, updatePostLike, updateCommentLike } = require('../models/postAccessDataService');
 const { handleError } = require('../../utils/handleError');
 const auth = require('../../auth/authServices');
+const Post = require('../models/mongodb/Post');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -122,15 +123,19 @@ router.patch('/comments/:id', auth, async (req, res) => {
     };
 })
 
-router.delete('/comments/:id', auth, async (req, res) => {
+router.delete('/:postId/comments/:commentId', auth, async (req, res) => {
     try {
         const userInfo = req.user;
-        const { id } = req.params;
+        const { postId, commentId } = req.params;
+        const postOfTheComment = await getPost(postId);
 
-        if (userInfo._id !== req.creator._id.toString() && !userInfo.isAdmin) {
+        const comment = postOfTheComment.comments.filter((comment) => comment._id !== commentId);
+
+        if (userInfo._id !== comment[0].creator._id.toString() && !userInfo.isAdmin) {
             return handleError(res, 403, 'Authoristion Error: You are no allowed to delete this comment');
         };
-        let newCommentArray = await deleteComment(postId.post, id);
+
+        let newCommentArray = await deleteComment(postId, commentId);
         res.send(newCommentArray);
     } catch (error) {
         handleError(res, 400, error.message)
