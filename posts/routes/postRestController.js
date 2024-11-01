@@ -129,7 +129,7 @@ router.delete('/:postId/comments/:commentId', auth, async (req, res) => {
         const { postId, commentId } = req.params;
         const postOfTheComment = await getPost(postId);
 
-        const comment = postOfTheComment.comments.filter((comment) => comment._id !== commentId);
+        const comment = postOfTheComment.comments.filter((comment) => comment._id.toString() === commentId);
 
         if (userInfo._id !== comment[0].creator._id.toString() && !userInfo.isAdmin) {
             return handleError(res, 403, 'Authoristion Error: You are no allowed to delete this comment');
