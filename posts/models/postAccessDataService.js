@@ -18,7 +18,7 @@ const createComment = async (comment) => {
 
         postOfTheComment.comments.push(comment);
         await Post.findByIdAndUpdate(postOfTheComment._id, postOfTheComment)
-        return comment
+        return postOfTheComment.comments
     } catch (error) {
         createError('Mongoose', error)
     }
