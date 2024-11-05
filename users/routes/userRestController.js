@@ -88,7 +88,7 @@ router.delete('/:id', auth, async (req, res) => {
         const userInfo = req.user;
         const userFromDb = await getUser(id);
 
-        if (userInfo._id !== userFromDb._id.toString() && !userInfo.isAdmin) {
+        if (!userInfo.isAdmin) {
             handleError(res, 403, 'You Are not allowed to Delete');
         };
 
