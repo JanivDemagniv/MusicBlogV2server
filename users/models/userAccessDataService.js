@@ -74,4 +74,22 @@ const deleteUser = async (userId) => {
     };
 };
 
-module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser };
+const isCreatorUpdate = async (userId) => {
+    try {
+        const userInDb = await User.findById(userId);
+
+        if (!userId) {
+            throw new Error('user not found');
+        };
+
+        const newStatus = !userInDb.isCreator;
+        userInDb.isCreator = newStatus;
+
+        await userInDb.save();
+        return userInDb;
+    } catch (error) {
+        createError('Mongoose', error)
+    }
+}
+
+module.exports = { createUser, getUser, loginUser, getAllUsers, updateUser, deleteUser, isCreatorUpdate };

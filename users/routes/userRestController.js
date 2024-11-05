@@ -1,6 +1,6 @@
 const express = require('express');
 const { handleError } = require('../../utils/handleError');
-const { createUser, loginUser, getUser, getAllUsers, updateUser, deleteUser } = require('../models/userAccessDataService');
+const { createUser, loginUser, getUser, getAllUsers, updateUser, deleteUser, isCreatorUpdate } = require('../models/userAccessDataService');
 const auth = require('../../auth/authServices');
 const { validateSignup, validateLogin } = require('../validation/userValidationService');
 const router = express.Router();
@@ -98,5 +98,21 @@ router.delete('/:id', auth, async (req, res) => {
         handleError(res, 400, error.message)
     };
 });
+
+router.patch('/:id', auth, async (req, res) => {
+    try {
+        const userInfo = req.user;
+        const { id } = req.params;
+
+        if (!userInfo.isAdmin) {
+            handleError(res, 403, 'You Are not allowed to change creators status');
+        };
+
+        let userCreator = await isCreatorUpdate(id);
+        res.send(userCreator)
+    } catch (error) {
+        handleError(res, 400, error.message)
+    }
+})
 
 module.exports = router;
