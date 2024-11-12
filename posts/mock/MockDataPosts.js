@@ -1,3 +1,7 @@
+const chalk = require("chalk");
+const User = require("../../users/models/mongodb/User");
+const Post = require("../models/mongodb/Post");
+
 const mockDataPosts = [
     {
         title: 'a gritty portrait of the 90s',
@@ -202,4 +206,27 @@ const mockDataPosts = [
     },
 ];
 
-export { mockDataPosts };
+
+const createPostMockData = async () => {
+    try {
+        let posts = await Post.find();
+        let users = await User.find();
+        let user = users[0];
+
+        if (posts.length == 0) {
+            mockDataPosts.forEach(async (post) => {
+                await createCard({ ...post, creator: { userName: user.userName, _id: user._id, image: { url: user.profilePic.url, alt: user.profilePic.alt } } });
+            });
+            console.log(chalk.blue('posts mock data has been created'));
+
+            return
+        };
+
+        return
+    } catch (error) {
+        console.log('something Went Wrong');
+
+    }
+};
+
+module.exports = createPostMockData;

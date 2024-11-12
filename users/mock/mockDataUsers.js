@@ -1,3 +1,5 @@
+const User = require("../models/mongodb/User");
+
 const mockUsers = [
     {
         userName: 'tunaparkinglot',
@@ -50,4 +52,19 @@ const mockUsers = [
 
 ]
 
-export default mockUsers;
+const createUserMockData = async () => {
+    let users = await User.find();
+
+    if (users.length == 0) {
+        mockUsers.forEach(async (mockUser) => {
+            await createUser(mockUser);
+        });
+        console.log(chalk.blue('users mock data has been created'));
+
+        return
+    };
+
+    return
+};
+
+module.exports = createUserMockData;
