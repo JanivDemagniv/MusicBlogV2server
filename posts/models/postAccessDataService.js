@@ -1,5 +1,5 @@
 const { createError } = require("../../utils/handleError");
-const { replaceObjectById, deleteObjectById } = require("../helpers/functions");
+const { replaceObjectById } = require("../helpers/functions");
 const Post = require("./mongodb/Post");
 
 const createPost = async (post) => {
