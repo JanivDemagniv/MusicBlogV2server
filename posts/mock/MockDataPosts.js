@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const User = require("../../users/models/mongodb/User");
 const Post = require("../models/mongodb/Post");
+const { createPost } = require("../models/postAccessDataService");
 
 const mockDataPosts = [
     {
@@ -104,7 +105,8 @@ const mockDataPosts = [
         title: `the detroit legend’s second act`,
         subtitle: `eminem’s complex journey`,
         artist: 'eminem',
-        album: `<p><em><u>the marshall mathers lp 2</u></em> is a comeback album that finds <strong>eminem </strong>reflecting on his legacy and past controversies.</p><p><br></p><p>it’s a mix of introspection and classic eminem humor, with tracks like “rap god” showcasing his lyrical skill and speed, while “the monster” delves into themes of fame and mental health. <strong>eminem’s </strong>ability to weave complex rhyme schemes and address personal struggles makes this album a strong follow-up to his earlier work.</p><p><br></p><p><strong><em>the marshall mathers lp 2</em></strong> is both nostalgic and innovative, capturing eminem’s journey and his determination to remain relevant in a changing music landscape.</p>`,
+        album: 'Marshall mathers lp 2',
+        content: `<p><em><u>the marshall mathers lp 2</u></em> is a comeback album that finds <strong>eminem </strong>reflecting on his legacy and past controversies.</p><p><br></p><p>it’s a mix of introspection and classic eminem humor, with tracks like “rap god” showcasing his lyrical skill and speed, while “the monster” delves into themes of fame and mental health. <strong>eminem’s </strong>ability to weave complex rhyme schemes and address personal struggles makes this album a strong follow-up to his earlier work.</p><p><br></p><p><strong><em>the marshall mathers lp 2</em></strong> is both nostalgic and innovative, capturing eminem’s journey and his determination to remain relevant in a changing music landscape.</p>`,
         image: {
             url: 'https://cdn.shoplightspeed.com/shops/610080/files/13695059/eminem-the-marshall-mathers-lp-2.jpg',
             alt: 'album cover'
@@ -215,7 +217,7 @@ const createPostMockData = async () => {
 
         if (posts.length == 0) {
             mockDataPosts.forEach(async (post) => {
-                await createCard({ ...post, creator: { userName: user.userName, _id: user._id, image: { url: user.profilePic.url, alt: user.profilePic.alt } } });
+                await createPost({ ...post, creator: { name: user.userName, _id: user._id, image: { url: user.profilePic.url, alt: user.profilePic.alt } } });
             });
             console.log(chalk.blue('posts mock data has been created'));
 

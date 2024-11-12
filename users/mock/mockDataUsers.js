@@ -1,4 +1,6 @@
+const chalk = require("chalk");
 const User = require("../models/mongodb/User");
+const { createUser } = require("../models/userAccessDataService");
 
 const mockUsers = [
     {
